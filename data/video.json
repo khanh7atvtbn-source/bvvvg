@@ -1,0 +1,9 @@
+{
+  "title": "Automation Upload Test",
+  "description": "Upload video bang Playwright automation.",
+  "filePath": "C:/Users/PV/Videos/video.mp4",
+  "thumbnailPath": "",
+  "tags": ["automation", "youtube"],
+  "privacy": "private",
+  "madeForKids": false
+}

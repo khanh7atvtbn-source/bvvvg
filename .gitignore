@@ -1,0 +1,17 @@
+node_modules/
+
+# Chrome/YouTube login profiles and local browser data.
+accounts/
+profiles/
+chrome-profile/
+Google/
+Local/
+
+# Runtime output.
+logs/
+data/uploaded.json
+
+# Local environment files.
+.env
+.env.*
+npm-debug.log*

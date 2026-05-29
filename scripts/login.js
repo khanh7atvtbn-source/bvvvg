@@ -1,0 +1,42 @@
+const readline = require("readline");
+const { chromium } = require("playwright");
+const config = require("../config/config");
+const { getAccount } = require("./upload");
+
+function waitForEnter(message) {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  return new Promise((resolve) => {
+    rl.question(message, () => {
+      rl.close();
+      resolve();
+    });
+  });
+}
+
+async function main() {
+  const accountArg = process.argv[2] && !process.argv[2].startsWith("--") ? process.argv[2] : undefined;
+  const { accountName, account } = getAccount(accountArg);
+
+  const context = await chromium.launchPersistentContext(account.profileDir, {
+    headless: false,
+    channel: config.browser.channel,
+    viewport: config.browser.viewport,
+    args: ["--disable-blink-features=AutomationControlled"],
+  });
+
+  const page = context.pages()[0] || (await context.newPage());
+  await page.goto("https://studio.youtube.com", { waitUntil: "domcontentloaded" });
+  console.log(`Da mo profile ${accountName}: ${account.profileDir}`);
+  console.log("Dang nhap YouTube/Google trong cua so Chrome vua mo.");
+  await waitForEnter("Dang nhap xong thi quay lai terminal bam Enter de dong browser...");
+  await context.close();
+}
+
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(error.message);
+    process.exitCode = 1;
+  });
+}
+
+module.exports = { main };
