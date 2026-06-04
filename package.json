@@ -1,16 +1,19 @@
 {
   "name": "youtube-automation",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Automation nay dung Playwright va Hidemium API de upload video len YouTube Studio.",
+  "main": "electron/main.js",
   "scripts": {
+    "app": "electron .",
+    "start": "electron .",
     "login": "node scripts/login.js",
     "upload": "node scripts/upload.js",
     "multi-upload": "node scripts/multi-upload.js",
+    "reup": "node scripts/reup.js",
     "login-acc1": "node scripts/login-account.js acc1",
     "login-acc2": "node scripts/login-account.js acc2",
     "login-acc3": "node scripts/login-account.js acc3",
-    "check": "node --check scripts/login.js && node --check scripts/upload.js && node --check scripts/multi-upload.js && node --check scripts/login-account.js && node --check config/accounts.js && node --check config/config.js",
+    "check": "node --check scripts/login.js && node --check scripts/upload.js && node --check scripts/multi-upload.js && node --check scripts/reup.js && node --check scripts/login-account.js && node --check scripts/utils/hidemium-api.js && node --check config/accounts.js && node --check config/config.js && node --check electron/main.js && node --check electron/preload.js && node --check electron/renderer/renderer.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -18,6 +21,21 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "playwright": "^1.60.0"
-  }
+    "dotenv": "^17.4.2",
+    "fs-extra": "^11.3.5",
+    "p-queue": "^9.3.0",
+    "playwright": "^1.60.0",
+    "yt-dlp-exec": "^1.0.2"
+  },
+  "devDependencies": {
+    "electron": "^42.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khanh7atvtbn-source/bvvvg.git"
+  },
+  "bugs": {
+    "url": "https://github.com/khanh7atvtbn-source/bvvvg/issues"
+  },
+  "homepage": "https://github.com/khanh7atvtbn-source/bvvvg#readme"
 }

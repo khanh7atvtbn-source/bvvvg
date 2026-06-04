@@ -1,7 +1,6 @@
 const readline = require("readline");
-const { chromium } = require("playwright");
 const config = require("../config/config");
-const { getAccount } = require("./upload");
+const { getAccount, launchBrowserSession } = require("./upload");
 
 function waitForEnter(message) {
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
@@ -17,19 +16,15 @@ async function main() {
   const accountArg = process.argv[2] && !process.argv[2].startsWith("--") ? process.argv[2] : undefined;
   const { accountName, account } = getAccount(accountArg);
 
-  const context = await chromium.launchPersistentContext(account.profileDir, {
-    headless: false,
-    channel: config.browser.channel,
-    viewport: config.browser.viewport,
-    args: ["--disable-blink-features=AutomationControlled"],
-  });
+  const session = await launchBrowserSession(account);
+  const { context } = session;
 
   const page = context.pages()[0] || (await context.newPage());
   await page.goto("https://studio.youtube.com", { waitUntil: "domcontentloaded" });
-  console.log(`Da mo profile ${accountName}: ${account.profileDir}`);
+  console.log(`Da mo profile ${accountName} bang ${config.browser.provider}.`);
   console.log("Dang nhap YouTube/Google trong cua so Chrome vua mo.");
   await waitForEnter("Dang nhap xong thi quay lai terminal bam Enter de dong browser...");
-  await context.close();
+  await session.close();
 }
 
 if (require.main === module) {

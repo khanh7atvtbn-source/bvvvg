@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="YouTube Auto Reup – tự động tải video lên YouTube" />
+    <title>YouTube Auto Reup</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <!-- ── Topbar ── -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">YT</div>
+        <div>
+          <h1>YouTube Auto Reup</h1>
+          <div class="path" id="queuePath"></div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <span class="status" id="jobStatus">Idle</span>
+        <button class="button secondary compact" id="reloadButton" type="button">↻ Reload</button>
+        <button class="button" id="startButton" type="button">▶ Start</button>
+        <button class="button danger" id="stopButton" type="button" disabled>■ Stop</button>
+      </div>
+    </header>
+
+    <!-- ── Workspace ── -->
+    <main class="workspace">
+
+      <!-- ── Left: Queue panel ── -->
+      <section class="queue-panel">
+        <div class="summary-grid" id="metrics"></div>
+
+        <div class="section-head queue-head">
+          <div>
+            <h2>Upload Queue</h2>
+            <div class="subtle" id="queueCount"></div>
+          </div>
+          <div class="queue-tools">
+            <input id="searchInput" type="search" placeholder="🔍  Search title / source" autocomplete="off" />
+            <select id="statusFilter">
+              <option value="all">All status</option>
+              <option value="pending">Pending</option>
+              <option value="done">Done</option>
+              <option value="error">Error</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Video</th>
+                <th>Account</th>
+                <th>Visibility</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="queueBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ── Right: Side panel ── -->
+      <aside class="side-panel">
+
+        <!-- Auto-scan folder section -->
+        <section class="tool-panel">
+          <div class="section-head">
+            <div>
+              <h2>📂 Auto-Scan Folder</h2>
+              <div class="subtle">Tự động thêm video vào queue từ thư mục</div>
+            </div>
+          </div>
+          <div style="display:grid;gap:10px;margin-top:2px;">
+            <label class="field">
+              <span>Account</span>
+              <select id="scanAccountInput"></select>
+            </label>
+            <label class="field">
+              <span>Visibility</span>
+              <select id="scanVisibilityInput">
+                <option value="private">Private</option>
+                <option value="unlisted">Unlisted</option>
+                <option value="public">Public</option>
+              </select>
+            </label>
+            <div class="form-actions">
+              <button class="button secondary" id="scanFolderButton" type="button">📁 Chọn thư mục &amp; Scan</button>
+            </div>
+            <div id="scanResult" class="subtle" style="min-height:16px;"></div>
+          </div>
+        </section>
+
+        <!-- Hidemium API section -->
+        <section class="tool-panel hidemium-panel">
+          <div class="section-head">
+            <div>
+              <h2>Hidemium API</h2>
+              <div class="subtle" id="hidemiumApiUrl">Local API</div>
+            </div>
+            <span class="api-dot" id="hidemiumStatusDot"></span>
+          </div>
+          <div class="hidemium-controls">
+            <label class="field">
+              <span>Profile account</span>
+              <select id="hidemiumAccountInput"></select>
+            </label>
+            <div class="uuid-box" id="hidemiumUuid">No UUID</div>
+            <div class="hidemium-actions">
+              <button class="button secondary" id="checkHidemiumButton" type="button">Check</button>
+              <button class="button" id="openHidemiumButton" type="button">Open</button>
+              <button class="button danger" id="closeHidemiumButton" type="button">Close</button>
+            </div>
+            <pre class="api-output" id="hidemiumOutput">No API call yet.</pre>
+          </div>
+        </section>
+
+        <!-- Add Video form -->
+        <section class="tool-panel">
+          <div class="section-head">
+            <div>
+              <h2>✚ Add Video</h2>
+              <div class="subtle">Thêm video vào queue thủ công</div>
+            </div>
+          </div>
+          <form id="queueForm">
+            <div class="segmented" role="group" aria-label="Source type">
+              <label>
+                <input type="radio" name="source_type" value="local" checked />
+                <span>Local File</span>
+              </label>
+              <label>
+                <input type="radio" name="source_type" value="url" />
+                <span>URL (TikTok/YT)</span>
+              </label>
+            </div>
+
+            <label class="field">
+              <span>Account</span>
+              <select id="accountInput" name="account"></select>
+            </label>
+
+            <label class="field">
+              <span>Source</span>
+              <div class="source-row">
+                <textarea id="sourceInput" name="source" placeholder="Đường dẫn file hoặc URL (mỗi dòng một đường dẫn/URL)" autocomplete="off" rows="3" style="resize: vertical; padding: 8px 10px; height: auto; min-height: 60px;"></textarea>
+                <button class="icon-button" id="pickFileButton" type="button" title="Chọn file video" style="align-self: flex-start; min-height: 60px;">Browse</button>
+              </div>
+            </label>
+
+            <label class="field">
+              <span>Title</span>
+              <input id="titleInput" name="title" type="text" maxlength="100" autocomplete="off" placeholder="Tiêu đề video (tối đa 100 ký tự)" />
+            </label>
+
+            <label class="field">
+              <span>Description</span>
+              <textarea id="descriptionInput" name="description" rows="4" placeholder="Mô tả video (tùy chọn)"></textarea>
+            </label>
+
+            <div class="form-grid">
+              <label class="field">
+                <span>Visibility</span>
+                <select id="visibilityInput" name="visibility">
+                  <option value="private">Private</option>
+                  <option value="unlisted">Unlisted</option>
+                  <option value="public">Public</option>
+                </select>
+              </label>
+              <label class="check">
+                <input id="madeForKidsInput" name="madeForKids" type="checkbox" />
+                <span>Made for kids</span>
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button class="button secondary" id="resetFormButton" type="button">Reset</button>
+              <button class="button" type="submit">Add to Queue</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Runtime log -->
+        <section class="tool-panel logs-panel">
+          <div class="section-head">
+            <div>
+              <h2>🖥 Runtime Log</h2>
+              <div class="subtle">Output từ reup job đang chạy</div>
+            </div>
+            <button class="button secondary compact" id="clearLogButton" type="button">Clear</button>
+          </div>
+          <pre id="logOutput"></pre>
+        </section>
+
+      </aside>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./renderer.js"></script>
+  </body>
+</html>

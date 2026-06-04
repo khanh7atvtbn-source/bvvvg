@@ -1,0 +1,25 @@
+{
+  "name": "youtube-auto-reupload",
+  "version": "1.0.0",
+  "description": "Electron app to auto‑re‑upload videos to YouTube",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "app": "electron .",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "chokidar": "^3.5.3",
+    "googleapis": "^126.0.0",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "electron": "^42.3.0"
+  }
+}

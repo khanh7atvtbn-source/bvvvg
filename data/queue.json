@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "id": 1,
+    "account": "acc1",
+    "source": "test1.mp4"
+  },
+  {
+    "id": 2,
+    "account": "acc2",
+    "source": "test2.mp4"
+  },
+  {
+    "id": 3,
+    "account": "acc3",
+    "source": "test3.mp4"
+  },
+  {
+    "id": 4,
+    "account": "acc1",
+    "source": "test.mp4"
+  }
+]
